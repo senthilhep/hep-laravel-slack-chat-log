@@ -2,6 +2,7 @@
 
 namespace Enigma;
 
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
@@ -57,9 +58,9 @@ class SlackChatHandler extends AbstractProcessingHandler
      */
     protected function getRequestBody(array $recordArr): array
     {
-        //$recordArr['formatted'] = substr($recordArr['formatted'], 34);
+        $timezone = (Config::get('logging.channels.slack-chat.timezone') != null && !empty(Config::get('logging.channels.slack-chat.timezone'))) ? Config::get('logging.channels.slack-chat.timezone') : 'Asia/Kolkata';
         return [
-            'text' => "*".Config::get('app.name') . ": " . $recordArr['level_name'] . "* \n" . $recordArr['message'] . "\n" . $this->getLevelContent($recordArr),
+            'text' => "*".Config::get('app.name') . ": " . $recordArr['level_name'] . "* \n" . $recordArr['message'] . "\n" . $this->getLevelContent($recordArr) . "\n * Date&Time: " . Carbon::parse(strtotime($recordArr['datetime']))->timezone($timezone)->format('Y-m-d h:i: A') . "*",
         ];
     }
 
