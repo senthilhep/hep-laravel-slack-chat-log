@@ -20,6 +20,7 @@ class SlackChatHandler extends AbstractProcessingHandler
      */
     protected function write(LogRecord $record): void
     {
+
         $params = $record->toArray();
         $params['formatted'] = $record->formatted;
         foreach ($this->getWebhookUrl() as $url) {
@@ -38,7 +39,7 @@ class SlackChatHandler extends AbstractProcessingHandler
     {
         $url = Config::get('logging.channels.slack-chat.url');
         if (!$url) {
-            throw new Exception('Google chat webhook url is not configured.');
+            throw new Exception('Slack chat webhook url is not configured.');
         }
 
         if (is_array($url)) {
@@ -60,7 +61,59 @@ class SlackChatHandler extends AbstractProcessingHandler
     {
         $timezone = (Config::get('logging.channels.slack-chat.timezone') != null && !empty(Config::get('logging.channels.slack-chat.timezone'))) ? Config::get('logging.channels.slack-chat.timezone') : 'Asia/Kolkata';
         return [
-            'text' => "*".Config::get('app.name') . ": " . $recordArr['level_name'] . "* \n" . $recordArr['message'] . "\n" . $this->getLevelContent($recordArr) . "\n * Date&Time: " . Carbon::parse(strtotime($recordArr['datetime']))->timezone($timezone)->format('Y-m-d h:i: A') . "*",
+            'blocks' => [
+                (object)[
+                    'type' => 'rich_text',
+                    'elements' => [
+                        (object)[
+                            'type' => 'rich_text_section',
+                            'elements' => [
+                                (object)[
+                                    'type' => 'text',
+                                    'text' => Config::get('app.name') . ": " . $recordArr['level_name'],
+                                    'style' => (object)[
+                                        'bold' => true
+                                    ]
+                                ]
+                            ]
+                        ],
+                        (object)[
+                            'type' => 'rich_text_section',
+                            'elements' => [
+                                (object)[
+                                    'type' => 'text',
+                                    'text' => $recordArr['message'],
+                                    'style' => (object)[
+                                        'bold' => true
+                                    ]
+                                ]
+                            ]
+                        ],
+                        (object)[
+                            'type' => 'rich_text_preformatted',
+                            'elements' => [
+                                (object)[
+                                    'type' => 'text',
+                                    'text' => $this->getLevelContent($recordArr)
+                                ]
+                            ]
+                        ],
+                        (object)[
+                            'type' => 'rich_text_section',
+                            'elements' => [
+                                (object)[
+                                    'type' => 'text',
+                                    'text' => "Date&Time: " . Carbon::parse(strtotime($recordArr['datetime']))->timezone($timezone)->format('Y-m-d h:i: A'),
+                                    'style' => (object)[
+                                        'bold' => true,
+                                        'italic' => true
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
         ];
     }
 
