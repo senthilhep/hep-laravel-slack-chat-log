@@ -15,6 +15,7 @@ Add the following code to the channels array in `config/logging.php` in your lar
 'slack-chat' => [
     'driver' => 'monolog',
     'url' => env('LOG_SLACK_CHAT_WEBHOOK_URL'),
+    'timezone' => env('LOG_SLACK_CHAT_TIMEZONE' , 'Asia/Kolkata'),
     'handler' => \Enigma\SlackChatHandler::class,
 ],
 ```
