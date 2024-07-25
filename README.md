@@ -11,10 +11,23 @@ composer require senthilhep/hep-laravel-slack-chat-log
 ```
 
 Add the following code to the channels array in `config/logging.php` in your laravel/lumen application.
+
+```
+In Laravel, error codes are categorized by levels:
+Info = 200;
+Notice = 250;
+Warning = 300;
+Error = 400;
+Critical = 500;
+Alert = 550;
+Emergency = 600;
+Errors reported with a level greater than the configured setting will be logged accordingly.
+```
 ```
 'slack-chat' => [
     'driver' => 'monolog',
     'url' => env('LOG_SLACK_CHAT_WEBHOOK_URL'),
+    'error_level' => env('LOG_SLACK_ERROR_LEVEL' , 400),
     'timezone' => env('LOG_SLACK_CHAT_TIMEZONE' , 'Asia/Kolkata'),
     'handler' => \Enigma\SlackChatHandler::class,
 ],

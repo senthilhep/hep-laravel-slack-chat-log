@@ -20,11 +20,12 @@ class SlackChatHandler extends AbstractProcessingHandler
      */
     protected function write(LogRecord $record): void
     {
-
         $params = $record->toArray();
         $params['formatted'] = $record->formatted;
-        foreach ($this->getWebhookUrl() as $url) {
-            Http::post($url, $this->getRequestBody($params));
+        if(Config::get('logging.channels.slack-chat.timezone') >= $params['level']) {
+            foreach ($this->getWebhookUrl() as $url) {
+                Http::post($url, $this->getRequestBody($params));
+            }
         }
     }
 
