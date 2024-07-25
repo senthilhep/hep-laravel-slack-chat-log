@@ -22,7 +22,7 @@ class SlackChatHandler extends AbstractProcessingHandler
     {
         $params = $record->toArray();
         $params['formatted'] = $record->formatted;
-        if(Config::get('logging.channels.slack-chat.timezone') >= $params['level']) {
+        if (Config::get('logging.channels.slack-chat.error_level') >= $params['level']) {
             foreach ($this->getWebhookUrl() as $url) {
                 Http::post($url, $this->getRequestBody($params));
             }
