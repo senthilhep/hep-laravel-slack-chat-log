@@ -24,7 +24,7 @@ class SlackChatHandler extends AbstractProcessingHandler
         $params['formatted'] = $record->formatted;
         if ($params['level'] >= Config::get('logging.channels.slack-chat.error_level')) {
             foreach ($this->getWebhookUrl() as $url) {
-                Http::post($url, $this->getRequestBody($params));
+                Http::post($url, $this->getRequestBody($params))
             }
         }
     }
@@ -71,7 +71,7 @@ class SlackChatHandler extends AbstractProcessingHandler
                             'elements' => [
                                 (object)[
                                     'type' => 'text',
-                                    'text' => Config::get('app.name') . ": " . $recordArr['level_name'],
+                                    'text' => Config::get('app.name') . ": " . $recordArr['level_name']
                                     'style' => (object)[
                                         'bold' => true
                                     ]
